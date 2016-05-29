@@ -50,34 +50,36 @@
     
         <h1>TV-Serien-Planer</h1>
         <br>
-        <table>
-            <tr>
-                <th>Name</th>
-                <th>Episode</th>
-                <th></th>
-            </tr>
-            <?php while ($row = $result->fetch_assoc()): ?>
+        <div class="main" >
+            <table>
                 <tr>
-                    <td><?= htmlspecialchars($row['name']) ?></td>
-                    <td><?= htmlspecialchars($row['episode']) ?></td>
-                    <td>
-                        <form action="index.php" method="post">
-                            <input type="hidden" name="id" value="<?= htmlspecialchars($row['id']) ?>">
-                            <button name="task" value="delete">löschen</button>
-                        </form>
-                    </td>
+                    <th>Name</th>
+                    <th>Episode</th>
+                    <th></th>
                 </tr>
-            <?php endwhile; ?>
+                <?php while ($row = $result->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($row['name']) ?></td>
+                        <td><?= htmlspecialchars($row['episode']) ?></td>
+                        <td class="button">
+                            <form action="index.php" method="post">
+                                <input type="hidden" name="id" value="<?= htmlspecialchars($row['id']) ?>">
+                                <button name="task" value="delete">löschen</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
 
 
-        </table>
-        <br>
+            </table>
+            <br>
 
-        <form action="index.php" method="post">
-            <label>Name: <input type="text" name="name" /></label>
-            <label>Letzte gesehene Episode: <input type="text" name="episode" /></label>
-            <button name="task" value="add">Speichern</button>
-        </form>
+            <form action="index.php" method="post">
+                <label>Name: <input type="text" name="name" /></label>
+                <label>Letzte gesehene Episode: <input type="text" name="episode" /></label>
+                <button name="task" value="add">Speichern</button>
+            </form>
+            </div>
         <?php if ($hasBeenAdded): ?>
             <p>Serie wurde erfolgreich hinzugefügt</p>
         <?php endif; ?>
