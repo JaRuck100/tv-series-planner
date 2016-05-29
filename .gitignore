@@ -20,6 +20,8 @@ $RECYCLE.BIN/
 # IDE files
 .idea/
 
+todos.txt
+
 # =========================
 # Operating System Files
 # =========================
