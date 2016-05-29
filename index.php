@@ -7,14 +7,41 @@
     </head>
 
     <body>
+
     <?php
         $mysqli = new mysqli('localhost', 'root', '', 'tv_series_planner');
-
         if ($mysqli->connect_error) {
             die('Connect Error (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error);
         }
 
-        $sql = "SELECT name, episode FROM tv_series";
+        $hasBeenAdded = false;
+        $hasBeenDeleted = false;
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($_POST["task"] == "delete") {
+                $statement = $mysqli->prepare("DELETE FROM tv_series WHERE id = ?");
+                $statement->bind_param("i", $_POST["id"]);
+                if ($statement->execute()) {
+                    $hasBeenDeleted = true;
+                } else {
+                    die("Error: " . $mysqli->error);
+                }
+            } else if ($_POST["task"] == "add") {
+                $name = $_POST['name'];
+                $episode = $_POST['episode'];
+
+
+                $statement = $mysqli->prepare('INSERT INTO tv_series (name, episode) VALUES(?, ?)');
+                $statement->bind_param('ss', $name, $episode);
+
+                if ($statement->execute()) {
+                    $hasBeenAdded = true;
+                } else {
+                    die("Error: " . $mysqli->error);
+                }
+            }
+        }
+
+        $sql = "SELECT id, name, episode FROM tv_series";
         $result = $mysqli->query($sql);
     ?>
     
@@ -24,11 +51,18 @@
             <tr>
                 <th>Name</th>
                 <th>Episode</th>
+                <th></th>
             </tr>
             <?php while ($row = $result->fetch_assoc()): ?>
                 <tr>
                     <td><?= htmlspecialchars($row["name"]) ?></td>
                     <td><?= htmlspecialchars($row["episode"]) ?></td>
+                    <td>
+                        <form action="index.php" method="post">
+                            <input type="hidden" name="id" value="<?= htmlspecialchars($row["id"]) ?>">
+                            <button name="task" value="delete">löschen</button>
+                        </form>
+                    </td>
                 </tr>
             <?php endwhile; ?>
 
@@ -36,33 +70,17 @@
         </table>
         <br>
 
-
-        <?php if ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
-            <?php
-                $name = $_POST['name'];
-                $episode = $_POST['episode'];
-
-
-                $statement = $mysqli->prepare('INSERT INTO tv_series (name, episode) VALUES(?, ?)');
-                $statement->bind_param('ss', $name, $episode);
-
-                if ($statement->execute()) {
-                    echo "Serie wurde erfolgreich hinzugefügt";
-                } else {
-                    echo "Error: " . $mysqli->error;
-                }
-            ?>
-
-            <br>
-            <p><?= htmlspecialchars($_POST['name']); ?></p>
-            <p><?= htmlspecialchars($_POST['episode']); ?></p>
-        <?php endif; ?>
-
         <form action="index.php" method="post">
             <label>Name: <input type="text" name="name" /></label>
             <label>Letzte gesehene Episode: <input type="text" name="episode" /></label>
-            <button>Speichern</button>
+            <button name="task" value="add">Speichern</button>
         </form>
+        <?php if ($hasBeenAdded): ?>
+            <p>Serie wurde erfolgreich hinzugefügt</p>
+        <?php endif; ?>
+        <?php if ($hasBeenDeleted): ?>
+            <p>Serie wurde erfolgreich gelöscht</p>
+        <?php endif; ?>
     
     </body>
 </html>
