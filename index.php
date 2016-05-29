@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>TV-Series-Planer</title>
+        <title>TV-Serien-Planer</title>
         <link rel="stylesheet" href="style.css">
     </head>
 
@@ -17,17 +17,20 @@
         $hasBeenAdded = false;
         $hasBeenDeleted = false;
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if ($_POST["task"] == "delete") {
-                $statement = $mysqli->prepare("DELETE FROM tv_series WHERE id = ?");
-                $statement->bind_param("i", $_POST["id"]);
+            if ($_POST['task'] == 'delete') {
+                $statement = $mysqli->prepare('DELETE FROM tv_series WHERE id = ?');
+                $statement->bind_param('i', $_POST['id']);
                 if ($statement->execute()) {
                     $hasBeenDeleted = true;
                 } else {
-                    die("Error: " . $mysqli->error);
+                    die('Error: ' . $mysqli->error);
                 }
-            } else if ($_POST["task"] == "add") {
+            } else if ($_POST['task'] == 'add') {
                 $name = $_POST['name'];
                 $episode = $_POST['episode'];
+                if ($name == '' || $episode == '') {
+                    die('Fehler! Mind. eins der Felder ist leer');
+                }
 
 
                 $statement = $mysqli->prepare('INSERT INTO tv_series (name, episode) VALUES(?, ?)');
@@ -36,16 +39,16 @@
                 if ($statement->execute()) {
                     $hasBeenAdded = true;
                 } else {
-                    die("Error: " . $mysqli->error);
+                    die('Error: ' . $mysqli->error);
                 }
             }
         }
 
-        $sql = "SELECT id, name, episode FROM tv_series";
+        $sql = 'SELECT id, name, episode FROM tv_series';
         $result = $mysqli->query($sql);
     ?>
     
-        <h1>TV-Series-Planer</h1>
+        <h1>TV-Serien-Planer</h1>
         <br>
         <table>
             <tr>
@@ -55,11 +58,11 @@
             </tr>
             <?php while ($row = $result->fetch_assoc()): ?>
                 <tr>
-                    <td><?= htmlspecialchars($row["name"]) ?></td>
-                    <td><?= htmlspecialchars($row["episode"]) ?></td>
+                    <td><?= htmlspecialchars($row['name']) ?></td>
+                    <td><?= htmlspecialchars($row['episode']) ?></td>
                     <td>
                         <form action="index.php" method="post">
-                            <input type="hidden" name="id" value="<?= htmlspecialchars($row["id"]) ?>">
+                            <input type="hidden" name="id" value="<?= htmlspecialchars($row['id']) ?>">
                             <button name="task" value="delete">löschen</button>
                         </form>
                     </td>
