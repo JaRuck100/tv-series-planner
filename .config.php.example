@@ -1,0 +1,5 @@
+<?php
+    $config['dbHostname'] = 'localhost';
+    $config['dbUser'] = 'root';
+    $config['dbPassword'] = '';
+    $config['dbName'] = 'tv_series_planner';

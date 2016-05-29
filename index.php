@@ -9,7 +9,8 @@
     <body>
 
     <?php
-        $mysqli = new mysqli('localhost', 'root', '', 'tv_series_planner');
+        require_once('.config.php');
+        $mysqli = new mysqli($config['dbHostname'], $config['dbUser'], $config['dbPassword'], $config['dbName']);
         if ($mysqli->connect_error) {
             die('Connect Error (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error);
         }
