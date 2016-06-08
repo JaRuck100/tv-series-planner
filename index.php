@@ -17,6 +17,7 @@
 
         $hasBeenAdded = false;
         $hasBeenDeleted = false;
+        $hasBeenUpdated = false;
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($_POST['task'] == 'delete') {
                 $statement = $mysqli->prepare('DELETE FROM tv_series WHERE id = ?');
@@ -42,6 +43,15 @@
                 } else {
                     die('Error: ' . $mysqli->error);
                 }
+
+            } else if  ($_POST['task'] == 'update'){
+                $episode = $_POST['episode'];
+                $id = $_POST['id'];
+                $statement = $mysqli->prepare("UPDATE tv_series SET episode = ? WHERE id = ?" );
+                $statement->bind_param('si', $episode, $id);
+                $statement->execute();
+                $hasBeenUpdated = true;
+
             }
         }
 
@@ -54,20 +64,35 @@
         <div class="main" >
             <table>
                 <tr>
-                    <th>Name</th>
-                    <th>Episode</th>
-                    <th></th>
+                    <th class="name">Name</th>
+                    <th class="episode">Episode</th>
+                    <th class="button"></th>
+                    <th class="button"></th>
                 </tr>
                 <?php while ($row = $result->fetch_assoc()): ?>
                     <tr>
-                        <td><?= htmlspecialchars($row['name']) ?></td>
-                        <td><?= htmlspecialchars($row['episode']) ?></td>
+                        <td class="name"><?= htmlspecialchars($row['name']) ?></td>
+                        <td class="episode">
+                            <form action="index.php" method="post">
+                                <label><input class="episode" type="text" name="episode" value="<?= htmlspecialchars($row['episode']) ?>"/>
+                                    <input type="hidden" name="id" value="<?= htmlspecialchars($row['id']) ?>">
+                                    <button name="task" value="update">update</button>
+                                    </label>
+                            </form>
+                        </td>
                         <td class="button">
                             <form action="index.php" method="post">
                                 <input type="hidden" name="id" value="<?= htmlspecialchars($row['id']) ?>">
                                 <button name="task" value="delete">löschen</button>
                             </form>
                         </td>
+                        <!--<td class="button">
+                            <form action="index.php" method="post">
+                                <input type="hidden" name="id" value="<?= htmlspecialchars($row['id']) ?>">
+                                <button name="task" value="update">update</button>
+                            </form>-->
+                        </td>
+
                     </tr>
                 <?php endwhile; ?>
 
@@ -77,7 +102,7 @@
 
             <form action="index.php" method="post">
                 <label>Name: <input type="text" name="name" /></label>
-                <label>Letzte gesehene Episode: <input type="text" name="episode" /></label>
+                <label>Letzte gesehene Episode: <input class="episode" type="text" name="episode" /></label>
                 <button name="task" value="add">Speichern</button>
             </form>
             </div>
@@ -86,6 +111,9 @@
         <?php endif; ?>
         <?php if ($hasBeenDeleted): ?>
             <p>Serie wurde erfolgreich gelöscht</p>
+        <?php endif; ?>
+        <?php if ($hasBeenUpdated): ?>
+            <p>Serie wurde erfolgreich upgedatet</p>
         <?php endif; ?>
     
     </body>

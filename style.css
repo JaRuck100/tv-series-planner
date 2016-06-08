@@ -25,9 +25,20 @@ th {
 }
 
 td {
-    padding: 2px 70px 2px 5px;
+    padding: 2px 50px 2px 5px;
+}
+.button {
+    min-width: 10px;
 }
 
-td.button {
-    padding-left: 100px;
+.name {
+    min-width: 300px;
+
+}
+.episode {
+    min-width: 10px;
+
+}
+input.episode {
+    width: 60px;"
 }
