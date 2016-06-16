@@ -1,3 +1,6 @@
-<Files .config.php>
-Deny from all
+<Files .config*>
+  Require all denied
+</Files>
+<Files .install*>
+  Require all denied
 </Files>
